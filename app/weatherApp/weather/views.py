@@ -1,9 +1,24 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
-
-# def index(request):
-#     return render(request, 'weather/index.html') #returns the index.html template
+import requests
+from .models import City
 
 class IndexView(TemplateView):
     def get(self, request, **kwargs):
-        return render(request, 'index.html', context=None)
+        url = 'http://api.openweathermap.org/data/2.5/weather?q={}&units=imperial&appid=fdcf9e40f8e2bed200c2a46856a44335'
+        cities = City.objects.all() 
+        weather_data = []
+        for city in cities:
+            city_weather = requests.get(url.format(city)).json()
+
+            weather = {
+            'city' : city,
+            'temperature' : city_weather['main']['temp'],
+            'description' : city_weather['weather'][0]['description'],
+            'icon' : city_weather['weather'][0]['icon']
+            }
+        
+            weather_data.append(weather)
+        context = {'weather_data' : weather_data}
+        
+        return render(request, 'index.html', context)
