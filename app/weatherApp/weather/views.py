@@ -2,11 +2,17 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 import requests
 from .models import City
+from .forms import CityForm
 
-class IndexView(TemplateView):
-    def get(self, request, **kwargs):
-        url = 'http://api.openweathermap.org/data/2.5/weather?q={}&units=imperial&appid=fdcf9e40f8e2bed200c2a46856a44335'
+def index(request):
         cities = City.objects.all() 
+        url = 'http://api.openweathermap.org/data/2.5/weather?q={}&units=imperial&appid=fdcf9e40f8e2bed200c2a46856a44335'
+        
+        if request.method == 'POST': # only true if form is submitted
+            form = CityForm(request.POST) # add actual request data to form for processing
+            form.save() # will validate and save if validate
+        form = CityForm()
+    
         weather_data = []
         for city in cities:
             city_weather = requests.get(url.format(city)).json()
@@ -19,6 +25,6 @@ class IndexView(TemplateView):
             }
         
             weather_data.append(weather)
-        context = {'weather_data' : weather_data}
+        context = {'weather_data' : weather_data, 'form' : form}
         
         return render(request, 'index.html', context)
