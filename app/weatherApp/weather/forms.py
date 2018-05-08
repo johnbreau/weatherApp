@@ -8,3 +8,6 @@ class CityForm(ModelForm):
         widgets = {
             'name': TextInput(attrs={'class' : 'input', 'placeholder' : 'City Name'}),
         } #updates the input class to have the correct Bulma class and placeholder
+
+class DeleteForm():
+    print('Hello')

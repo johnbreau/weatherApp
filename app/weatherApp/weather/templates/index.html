@@ -61,6 +61,12 @@
                                     </p>
                                 </div>
                             </div>
+                            <form method="DELETE">
+                                {% csrf_token %}
+                                <button class="delete is-medium">
+                                    -
+                                </button>
+                            </form>
                         </article>
                     </div>
                     {% endfor %}
